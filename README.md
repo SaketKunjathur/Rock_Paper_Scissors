@@ -1,4 +1,4 @@
-# Rock_Paper_Scissors
+# Rock Paper Scissors
 
 In this game I have made the basic tic-tac-toe game with all the extra screens like menus, pause, how to play etc. and I have also added a save score button which would save the score according to 2 criterias. The rest of the the game is pretty much the simple tic-tac-toe game.
 
