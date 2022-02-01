@@ -1,11 +1,13 @@
 import pygame
 import random
+import os
+
 
 pygame.init()
-
 display = (900, 600)
 win = pygame.display.set_mode(display)
 pygame.display.set_caption('ROCK PAPER AND SCISSORS')
+
 
 def message_to_screen2center(font, size, text, color, pos):
     font = pygame.font.SysFont(font, size)
@@ -13,6 +15,7 @@ def message_to_screen2center(font, size, text, color, pos):
     textRect = text.get_rect()
     textRect.center = pos
     win.blit(text, textRect)
+
 
 def score(playerscore, compscore, playeradd, compadd):
     if playeradd:
@@ -22,12 +25,17 @@ def score(playerscore, compscore, playeradd, compadd):
     message_to_screen2center('lucidaconsole', 20, playerscore, black, (display[0] // 2, (display[1] // 2) - 10))
     message_to_screen2center('lucidaconsole', 20, compscore, black, (display[0] // 2, (display[1] // 2) + 10))
 
+
 def savscore(winner, loser):
+    print('saving highscore')
     a = open('score.txt', 'w')
     a.write(str(winner)+':'+str(loser)+', ')
     a.close()
 
+
 def highscorecheck(winner, loser):
+    # TODO add comments to describe the logic behind this function
+    # TODO fix bugs if score > 10
     b = open('highscore.txt', 'r')
     text = b.read()
     b.close()
@@ -48,169 +56,155 @@ def highscorecheck(winner, loser):
             c.write('highscore.txt', 'w')
             c.write(str(wins)+':'+str(loses))
 
-playerScoreadd = False
-computerScoreadd = False
-playerScore = 0
-computerScore = 0
-playerScoreList = []
-computerScoreList = []
-score_value = []
-black = (0, 0, 0)
-white = (255, 255, 255)
-red = (255, 0, 0)
-yellow = (255, 255, 0)
-green = (0, 255, 0)
-blue = (0, 0, 255)
-run = True
-menus = True
-highscore = False
-tutorial = False
-pause = False
-choice = ['rock', 'paper', 'scissor']
-playerList = []
-computerList = []
-randElement = random.choice(choice)
-computerList.append(randElement)
-while run:
-    while menus:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                highscore = False
-                tutorial = False
-                pause = False
-                gameOver = False
-                menus = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                playstartx = play_btnRect[0]
-                playendx = play_btnRect[0] + play_btnRect[2]
-                playstarty = play_btnRect[1]
-                playendy = play_btnRect[1] + play_btnRect[3]
-                tutorialstartx = how_to_playRect[0]
-                tutorialendx = how_to_playRect[0] + how_to_playRect[2]
-                tutorialstarty = how_to_playRect[1]
-                tutorialendy = how_to_playRect[1] + how_to_playRect[3]
-                if pos[0] >= playstartx and pos[0] < playendx and pos[1] > playstarty and pos[1] < playendy:
-                    menus = False
-                    run = True
-                if pos[0] >= tutorialstartx and pos[0] < tutorialendx and pos[1] > tutorialstarty and pos[1] < tutorialendy:
-                    menus = False
-                    tutorial = True
-        win.fill(yellow)
-        c = open('highscore.txt', 'r')
-        text = c.read()
-        c.close
-        title = pygame.image.load('title.png')
-        title = pygame.transform.scale(title, (47 * 14, 21 * 14))
-        titleRect = title.get_rect()
-        titleRect.center = ((display[0] // 2), (display[1] // 2) - 150)
-        win.blit(title, titleRect)
-        play_btn = pygame.image.load('play.png')
-        play_btn = pygame.transform.scale(play_btn, (4 * 50, 1 * 50))
-        play_btnRect = play_btn.get_rect()
-        play_btnRect.center = ((display[0] // 2), ((display[1] // 2) + 50))
-        win.blit(play_btn, play_btnRect)
-        highscore = pygame.image.load('highscore.png')
-        highscore = pygame.transform.scale(highscore, (80 * 5, 9 * 5))
-        highscoreRect = highscore.get_rect()
-        highscoreRect.center = ((display[0] // 2), (display[1] // 2) + 103)
-        win.blit(highscore, highscoreRect)
-        how_to_play = pygame.image.load('how_to_play.png')
-        how_to_play = pygame.transform.scale(how_to_play, (12 * 17, 7 * 17))
-        how_to_playRect = how_to_play.get_rect()
-        how_to_playRect.center = ((display[0] // 2), (display[1] // 2) + 190)
-        win.blit(how_to_play, how_to_playRect)
-        message_to_screen2center('lucidaconsole', 30, str(text), black, ((display[0] // 2) + 140, (display[1] // 2) + 104))
-        
-        pygame.display.update()
 
-    while tutorial:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                menus = False
-                highscore = False
-                pause = False
-                gameOver = False
-                tutorial = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                backbtnstartx = backbtnRect[0]
-                backbtnendx = backbtnRect[0] + backbtnRect[2]
-                backbtnstarty = backbtnRect[1]
-                backbtnendy = backbtnRect[1] + backbtnRect[3]
-                if pos[0] >= backbtnstartx and pos[0] <= backbtnendx and pos[1] >= backbtnstarty and pos[1] <= backbtnendy:
-                    tutorial = False
-                    menus = True
-        win.fill(yellow)
-        backbtn = pygame.image.load('back.png')
-        backbtn = pygame.transform.scale(backbtn, (36 * 5, 9 * 5))
-        backbtnRect = backbtn.get_rect()
-        backbtnRect.center = (display[0] // 2, display[1] // 2)
-        win.blit(backbtn, backbtnRect)
-        message_to_screen2center("lucidaconsole", 20, "1)Use the buttons in the game screen to select rock, paper, scissors.", black, (display[0] // 2, 56))
-        message_to_screen2center("lucidaconsole", 20, "2)While using save score button this game checks whether it is a ", black, (display[0] // 2, 86))
-        message_to_screen2center("lucidaconsole", 20, "highscore or not and save it respectively.", black, (display[0] // 2, 116))
-        message_to_screen2center("lucidaconsole", 20, "4)If you want to see the score with opening the game then you can ", black, (display[0] // 2, 146))
-        message_to_screen2center("lucidaconsole", 20, "find a file named score.txt in your device for fing=ding all the scores ", black, (display[0] // 2, 176))
-        message_to_screen2center("lucidaconsole", 20, "or the highscore.txt file for the highscore.", black, (display[0] // 2, 206))
-        message_to_screen2center("lucidaconsole", 20, "5)You can click on the back button in the paused menu to go to the menus.", black, (display[0] // 2, 236))
-        pygame.display.update()
+# utility function
+def img(name):
+    return pygame.image.load(
+        os.sep.join(('assets', name+'.png'))
+    )
 
-    while pause:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                menus = False
-                highscore = False
-                tutorial = False
-                pause = False
-                gameOver = False
-                pause = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                resumestartx = resumeRect[0]
-                resumendx = resumeRect[0] + resumeRect[2]
-                resumestarty = resumeRect[1]
-                resumendy = resumeRect[1] + resumeRect[3]
-                backstartx = backRect[0]
-                backendx = backRect[0] + backRect[2]
-                backstarty = backRect[1]
-                backendy = backRect[1] + backRect[3]
-                if pos[0] >= resumestartx and pos[0] <= resumendx and pos[1] >= resumestarty and pos[1] <= resumendy:
-                    pause = False
-                if pos[0] >= backstartx and pos[0] <= backendx and pos[1] >= backstarty and pos[1] <= backendy:
-                    pause = False
-                    menus = True
-                    playerList.clear()
-                    computerList.clear()
-                    randElement = random.choice(choice)
 
-        win.fill((100, 100, 100))
-        label = pygame.image.load('paused.png')
-        label = pygame.transform.scale(label, (14 * 18, 3 * 19))
-        labelRect = label.get_rect()
-        labelRect.center = (display[0] // 2, 110)
-        pygame.draw.rect(win, ((50, 50, 50)), (labelRect[0] - 10, labelRect[1] - 10, labelRect[2] + 20, 180))
-        win.blit(label, labelRect)
-        resume = pygame.image.load('resume.png')
-        resume = pygame.transform.scale(resume, (14 * 14, 3 * 14))
-        resumeRect = resume.get_rect()
-        resumeRect.center = (display[0] // 2, 170)
-        win.blit(resume, resumeRect)
-        back = pygame.image.load('back.png')
-        back = pygame.transform.scale(back, (36 * 5, 9 * 5))
-        backRect = back.get_rect()
-        backRect.center = (display[0] // 2, (display[1] // 2) - 80)
-        win.blit(back, backRect)
-        pygame.display.update()
+# we declare various game states
+MENU_GS, TUTORIAL_GS, PAUSE_GS, PLAY_GS = range(4)  # one code per gamestate(GS)
 
+
+def update_menu_gs():
+    global play_btnRect, how_to_playRect, gameover, curr_gs  # define global variables (defined not locally)
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = False
+            gameover = True
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
+            playstartx = play_btnRect[0]
+            playendx = play_btnRect[0] + play_btnRect[2]
+            playstarty = play_btnRect[1]
+            playendy = play_btnRect[1] + play_btnRect[3]
+            tutorialstartx = how_to_playRect[0]
+            tutorialendx = how_to_playRect[0] + how_to_playRect[2]
+            tutorialstarty = how_to_playRect[1]
+            tutorialendy = how_to_playRect[1] + how_to_playRect[3]
+            if pos[0] >= playstartx and pos[0] < playendx and pos[1] > playstarty and pos[1] < playendy:
+                curr_gs = PLAY_GS
+            if pos[0] >= tutorialstartx and pos[0] < tutorialendx and pos[1] > tutorialstarty and pos[1] < tutorialendy:
+                curr_gs = TUTORIAL_GS
+    
+    win.fill(yellow)
+    c = open('highscore.txt', 'r')
+    text = c.read()
+    c.close
+    title = img('title')
+    title = pygame.transform.scale(title, (47 * 14, 21 * 14))
+    titleRect = title.get_rect()
+    titleRect.center = ((display[0] // 2), (display[1] // 2) - 150)
+    win.blit(title, titleRect)
+    play_btn = img('play')
+    play_btn = pygame.transform.scale(play_btn, (4 * 50, 1 * 50))
+    play_btnRect = play_btn.get_rect()
+    play_btnRect.center = ((display[0] // 2), ((display[1] // 2) + 50))
+    win.blit(play_btn, play_btnRect)
+    highscore = img('highscore')
+    highscore = pygame.transform.scale(highscore, (80 * 5, 9 * 5))
+    highscoreRect = highscore.get_rect()
+    highscoreRect.center = ((display[0] // 2), (display[1] // 2) + 103)
+    win.blit(highscore, highscoreRect)
+    how_to_play = img('how_to_play')
+    how_to_play = pygame.transform.scale(how_to_play, (12 * 17, 7 * 17))
+    how_to_playRect = how_to_play.get_rect()
+    how_to_playRect.center = ((display[0] // 2), (display[1] // 2) + 190)
+    win.blit(how_to_play, how_to_playRect)
+    message_to_screen2center('lucidaconsole', 30, str(text), black, ((display[0] // 2) + 140, (display[1] // 2) + 104))
+    pygame.display.update()
+
+
+def update_tutorial_gs():
+    global gameover, menus, backbtnRect, curr_gs
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            gameover = True
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            backbtnstartx = backbtnRect[0]
+            backbtnendx = backbtnRect[0] + backbtnRect[2]
+            backbtnstarty = backbtnRect[1]
+            backbtnendy = backbtnRect[1] + backbtnRect[3]
+            if pos[0] >= backbtnstartx and pos[0] <= backbtnendx and pos[1] >= backbtnstarty and pos[1] <= backbtnendy:
+                curr_gs = MENU_GS
+    
+    win.fill(yellow)
+    backbtn = img('back')
+    backbtn = pygame.transform.scale(backbtn, (36 * 5, 9 * 5))
+    backbtnRect = backbtn.get_rect()
+    backbtnRect.center = (display[0] // 2, display[1] // 2)
+    win.blit(backbtn, backbtnRect)
+    message_to_screen2center("lucidaconsole", 20, "1)Use the buttons in the game screen to select rock, paper, scissors.", black, (display[0] // 2, 56))
+    message_to_screen2center("lucidaconsole", 20, "2)While using save score button this game checks whether it is a ", black, (display[0] // 2, 86))
+    message_to_screen2center("lucidaconsole", 20, "highscore or not and save it respectively.", black, (display[0] // 2, 116))
+    message_to_screen2center("lucidaconsole", 20, "4)If you want to see the score with opening the game then you can ", black, (display[0] // 2, 146))
+    message_to_screen2center("lucidaconsole", 20, "find a file named score.txt in your device for fing=ding all the scores ", black, (display[0] // 2, 176))
+    message_to_screen2center("lucidaconsole", 20, "or the highscore.txt file for the highscore.", black, (display[0] // 2, 206))
+    message_to_screen2center("lucidaconsole", 20, "5)You can click on the back button in the paused menu to go to the menus.", black, (display[0] // 2, 236))
+    pygame.display.update()
+
+
+def update_pause_gs():
+    global gameover, resumeRect, backRect, curr_gs
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            gameover = True
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = event.pos
+            resumestartx = resumeRect[0]
+            resumendx = resumeRect[0] + resumeRect[2]
+            resumestarty = resumeRect[1]
+            resumendy = resumeRect[1] + resumeRect[3]
+            backstartx = backRect[0]
+            backendx = backRect[0] + backRect[2]
+            backstarty = backRect[1]
+            backendy = backRect[1] + backRect[3]
+            if pos[0] >= resumestartx and pos[0] <= resumendx and pos[1] >= resumestarty and pos[1] <= resumendy:
+                curr_gs = PLAY_GS
+            if pos[0] >= backstartx and pos[0] <= backendx and pos[1] >= backstarty and pos[1] <= backendy:
+                playerscore = compscore = 0
+                playerList.clear()
+                computerList.clear()
+                randElement = random.choice(choice)
+                curr_gs = MENU_GS
+
+    win.fill((100, 100, 100))
+    label = img('paused')
+    label = pygame.transform.scale(label, (14 * 18, 3 * 19))
+    labelRect = label.get_rect()
+    labelRect.center = (display[0] // 2, 110)
+    pygame.draw.rect(win, ((50, 50, 50)), (labelRect[0] - 10, labelRect[1] - 10, labelRect[2] + 20, 180))
+    win.blit(label, labelRect)
+    resume = img('resume')
+    resume = pygame.transform.scale(resume, (14 * 14, 3 * 14))
+    resumeRect = resume.get_rect()
+    resumeRect.center = (display[0] // 2, 170)
+    win.blit(resume, resumeRect)
+    back = img('back')
+    back = pygame.transform.scale(back, (36 * 5, 9 * 5))
+    backRect = back.get_rect()
+    backRect.center = (display[0] // 2, (display[1] // 2) - 80)
+    win.blit(back, backRect)
+    pygame.display.update()
+
+
+def update_play_gs():
+    global menus, gameover, playendx, playerScore, computerScore, curr_gs
+    global playagainRect, pausebtnRect, savescoreRect, randElement
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            gameover = True
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = event.pos  # use position given by the event
             playagainstartx = playagainRect[0]
             playagainendx = playagainRect[0] + playagainRect[2]
             playagainstarty = playagainRect[1]
@@ -245,7 +239,7 @@ while run:
                 computerScoreList.clear()
                 randElement = random.choice(choice)
             if pos[0] >= pausestartx and pos[0] <= pausendx and pos[1] >= pausestarty and pos[1] <= pausendy:
-                pause = True
+                curr_gs = PAUSE_GS
             if pos[0] >= savestartx and pos[0] <= savendx and pos[1] >= savestarty and pos[1] <= savendy:
                 savscore(playerScore, computerScore)
                 highscorecheck(playerScore, computerScore)
@@ -254,24 +248,24 @@ while run:
     pygame.draw.rect(win, (yellow), (10, 10, 344, display[1] - 20))
     pygame.draw.rect(win, (yellow), (364, 10, 172, display[1] - 20))
     pygame.draw.rect(win, (yellow), (546, 10, 344, display[1] - 20))
-    savescore = pygame.image.load('saveScore.png')
+    savescore = img('saveScore')
     savescore = pygame.transform.scale(savescore, (12 * 14, 5 * 14))
     savescoreRect = savescore.get_rect()
     savescoreRect.center = (display[0] // 2, display[1] - 70)
     win.blit(savescore, savescoreRect)
-    playagain = pygame.image.load('playAgain.png')
+    playagain = img('playAgain')
     playagain = pygame.transform.scale(playagain, (12 * 14, 5 * 14))
     playagainRect = playagain.get_rect()
     playagainRect.center = (display[0] // 2, display[1] - 160)
     win.blit(playagain, playagainRect)
-    pausebtn = pygame.image.load('pause.png')
+    pausebtn = img('pause')
     pausebtn = pygame.transform.scale(pausebtn, (4 * 42, 1 * 42))
     pausebtnRect = pausebtn.get_rect()
     pausebtnRect.center = (display[0] // 2, display[1] - 237)
     win.blit(pausebtn, pausebtnRect)
-    btn = pygame.image.load('button.png')
+    btn = img('button')
     btnscale = (90, 90)
-    scorebanner = pygame.image.load('score.png')
+    scorebanner = img('score')
     scorebanner = pygame.transform.scale(scorebanner, (4 * 42, 1 * 42))
     scorebannerRect = scorebanner.get_rect()
     scorebannerRect.center = (display[0] // 2, (display[1] // 2) - 100)
@@ -288,9 +282,9 @@ while run:
     btn3Rect = btn3.get_rect()
     btn3Rect.center = ((344 // 2) + 100, display[1] - 60)
     win.blit(btn3, btn3Rect)
-    rock = pygame.image.load('ROCK.png')
-    paper = pygame.image.load('PAPER.png')
-    scissor = pygame.image.load('SCISSOR.png')
+    rock = img('ROCK')
+    paper = img('PAPER')
+    scissor = img('SCISSOR')
     rock = pygame.transform.scale(rock, (7 * 7, 9 * 7))
     paper = pygame.transform.scale(paper, (14 * 3, 23 * 3))
     scissor = pygame.transform.scale(scissor, (5 * 8, 8 * 8))
@@ -305,42 +299,42 @@ while run:
     win.blit(scissor, scissorRect)
     if len(playerList) > 0:
         if playerList[0] == choice[0]:
-            rock = pygame.image.load('ROCK.png')
+            rock = img('ROCK')
             rock = pygame.transform.scale(rock, (7 * 32, 9 * 32))
             rock = pygame.transform.rotate(rock, -90)
             rockRect = rock.get_rect()
             rockRect.center = (344 // 2, display[1] // 2)
             win.blit(rock, rockRect)
         if playerList[0] == choice[1]:
-            paper = pygame.image.load('PAPER.png')
+            paper = img('PAPER')
             paper = pygame.transform.scale(paper, (14 * 12, 23 * 12))
             paper = pygame.transform.rotate(paper, -90)
             paperRect = paper.get_rect()
             paperRect.center = (344 // 2, display[1] // 2)
             win.blit(paper, paperRect)
         if playerList[0] == choice[2]:
-            scissor = pygame.image.load('SCISSOR.png')
+            scissor = img('SCISSOR')
             scissor = pygame.transform.scale(scissor, (5 * 37, 8 * 37))
             scissor = pygame.transform.rotate(scissor, -90)
             scissorRect = scissor.get_rect()
             scissorRect.center = (344 // 2, display[1] // 2)
             win.blit(scissor, scissorRect)
         if computerList[0] == choice[0]:
-            rock = pygame.image.load('ROCK.png')
+            rock = img('ROCK')
             rock = pygame.transform.scale(rock, (7 * 32, 9 * 32))
             rock = pygame.transform.rotate(rock, 90)
             rockRect = rock.get_rect()
             rockRect.center = (546 + 172, display[1] // 2)
             win.blit(rock, rockRect)
         if computerList[0] == choice[1]:
-            paper = pygame.image.load('PAPER.png')
+            paper = img('PAPER')
             paper = pygame.transform.scale(paper, (14 * 12, 23 * 12))
             paper = pygame.transform.rotate(paper, 90)
             paperRect = paper.get_rect()
             paperRect.center = (546 + 172, display[1] // 2)
             win.blit(paper, paperRect)
         if computerList[0] == choice[2]:
-            scissor = pygame.image.load('SCISSOR.png')
+            scissor = img('SCISSOR')
             scissor = pygame.transform.scale(scissor, (5 * 37, 8 * 37))
             scissor = pygame.transform.rotate(scissor, 90)
             scissorRect = scissor.get_rect()
@@ -348,19 +342,19 @@ while run:
             win.blit(scissor, scissorRect)
 
         if playerList[0] == computerList[0]:
-            tie = pygame.image.load('tie.png')
+            tie = img('tie')
             tie = pygame.transform.scale(tie, (14 * 10, 5 * 10))
             tieRect = tie.get_rect()
             tieRect.center = (display[0] // 2, 50)
             win.blit(tie, tieRect)
         elif playerList[0] == 'rock':
             if computerList[0] == 'paper':
-                winner = pygame.image.load('winner.png')
+                winner = img('winner')
                 winner = pygame.transform.scale(winner, (35 * 8, 5 * 8))
                 winnerRect = winner.get_rect()
                 winnerRect.center = (546 + 172, 50)
                 win.blit(winner, winnerRect)
-                loser = pygame.image.load('loser.png')
+                loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
                 loserRect = loser.get_rect()
                 loserRect.center = (344 // 2, 50)
@@ -369,12 +363,12 @@ while run:
                     computerScore += 1
                     computerScoreList.clear()
             elif computerList[0] == 'scissor':
-                winner = pygame.image.load('winner.png')
+                winner = img('winner')
                 winner = pygame.transform.scale(winner, (35 * 8, 5 * 8))
                 winnerRect = winner.get_rect()
                 winnerRect.center = (344 // 2, 50)
                 win.blit(winner, winnerRect)
-                loser = pygame.image.load('loser.png')
+                loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
                 loserRect = loser.get_rect()
                 loserRect.center = (546 + 172, 50)
@@ -384,12 +378,12 @@ while run:
                     playerScoreList.clear()
         elif playerList[0] == 'paper':
             if computerList[0] == 'rock':
-                winner = pygame.image.load('winner.png')
+                winner = img('winner')
                 winner = pygame.transform.scale(winner, (35 * 8, 5 * 8))
                 winnerRect = winner.get_rect()
                 winnerRect.center = (344 // 2, 50)
                 win.blit(winner, winnerRect)
-                loser = pygame.image.load('loser.png')
+                loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
                 loserRect = loser.get_rect()
                 loserRect.center = (546 + 172, 50)
@@ -398,12 +392,12 @@ while run:
                     playerScore += 1
                     playerScoreList.clear()
             elif computerList[0] == 'scissor':
-                winner = pygame.image.load('winner.png')
+                winner = img('winner')
                 winner = pygame.transform.scale(winner, (35 * 8, 5 * 8))
                 winnerRect = winner.get_rect()
                 winnerRect.center = (546 + 172, 50)
                 win.blit(winner, winnerRect)
-                loser = pygame.image.load('loser.png')
+                loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
                 loserRect = loser.get_rect()
                 loserRect.center = (344 // 2, 50)
@@ -413,12 +407,12 @@ while run:
                     computerScoreList.clear()
         elif playerList[0] == 'scissor':
             if computerList[0] == 'paper':
-                winner = pygame.image.load('winner.png')
+                winner = img('winner')
                 winner = pygame.transform.scale(winner, (35 * 8, 5 * 8))
                 winnerRect = winner.get_rect()
                 winnerRect.center = (344 // 2, 50)
                 win.blit(winner, winnerRect)
-                loser = pygame.image.load('loser.png')
+                loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
                 loserRect = loser.get_rect()
                 loserRect.center = (546 + 172, 50)
@@ -427,12 +421,12 @@ while run:
                     playerScore += 1
                     playerScoreList.clear()
             elif computerList[0] == 'rock':
-                winner = pygame.image.load('winner.png')
+                winner = img('winner')
                 winner = pygame.transform.scale(winner, (35 * 8, 5 * 8))
                 winnerRect = winner.get_rect()
                 winnerRect.center = (546 + 172, 50)
                 win.blit(winner, winnerRect)
-                loser = pygame.image.load('loser.png')
+                loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
                 loserRect = loser.get_rect()
                 loserRect.center = (344 // 2, 50)
@@ -441,11 +435,51 @@ while run:
                     computerScore += 1
                     computerScoreList.clear()
     message_to_screen2center('lucidaconsole', 90, str(playerScore)+':'+str(computerScore), black, ((display[0] // 2), (display[1] // 2) - 20))
-
     pygame.display.update()
+
+
+curr_gs = MENU_GS  # current game state
+
+# TODO we could add an associative structe: gamestate code to update function
+# e.g. assoc_gs_to_updatefunc = {}
+
+playerScoreadd = False
+computerScoreadd = False
+playerScore = 0
+computerScore = 0
+playerScoreList = []
+computerScoreList = []
+score_value = []
+black = (0, 0, 0)
+white = (255, 255, 255)
+red = (255, 0, 0)
+yellow = (255, 255, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+gameover = False
+menus = True
+highscore = False
+tutorial = False
+pause = False
+choice = ['rock', 'paper', 'scissor']
+playerList = []
+computerList = []
+randElement = random.choice(choice)
+computerList.append(randElement)
+
+
+# - game loop
+while not gameover:
+    if curr_gs == MENU_GS:
+        update_menu_gs()
+    elif curr_gs == TUTORIAL_GS:
+        update_tutorial_gs()
+    elif curr_gs == PAUSE_GS:
+        update_pause_gs()
+    elif curr_gs == PLAY_GS:
+        update_play_gs()
+
 
 print(playerScore)
 print(computerScore)
-
 pygame.quit()
-quit()
