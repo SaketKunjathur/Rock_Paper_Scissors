@@ -1,12 +1,55 @@
-import pygame
 import random
-import os
+# import os
+import katagames_sdk as katasdk
+
+kataen = katasdk.engine
+pygame = kataen.import_pygame()
+
+# - - CONSTANTS - -
+black = (0, 0, 0)
+white = (255, 255, 255)
+red = (255, 0, 0)
+yellow = (255, 255, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+
+X_CST = 344
+X_OFFSET = 80
+
+# we declare various game states
+MENU_GS, TUTORIAL_GS, PAUSE_GS, PLAY_GS = range(4)  # one code per gamestate(GS)
+
+# - - global variables - -
+curr_gs = MENU_GS  # current game state
+
+playerScoreadd = False
+computerScoreadd = False
+playerScore = 0
+computerScore = 0
+playerScoreList = []
+computerScoreList = []
+score_value = []
+gameover = False
+menus = True
+highscore = False
+tutorial = False
+pause = False
+choice = ['rock', 'paper', 'scissor']
+playerList = []
+computerList = []
+randElement = random.choice(choice)
+computerList.append(randElement)
+
+win = pygame.Surface((0, 0))
+display = [0, 0]  # size
 
 
-pygame.init()
-display = (900, 600)
-win = pygame.display.set_mode(display)
-pygame.display.set_caption('ROCK PAPER AND SCISSORS')
+@katasdk.web_entry_point
+def init_game():
+    global win, display
+    kataen.init()
+    win = kataen.get_screen()  # instead of: pygame.display.set_mode(display)
+    display[0], display[1] = win.get_size()
 
 
 def message_to_screen2center(font, size, text, color, pos):
@@ -50,22 +93,21 @@ def highscorecheck(winner, loser):
         c.write(str(winner)+':'+str(loser))
     if score1 == score2:
         if wins < winner:
-            c.write('highscore.txt', 'w')
+            c.write('highscore.txt')
             c.write(str(winner)+':'+str(loser))
         if wins > winner:
-            c.write('highscore.txt', 'w')
+            c.write('highscore.txt')
             c.write(str(wins)+':'+str(loses))
 
 
 # utility function
 def img(name):
-    return pygame.image.load(
-        os.sep.join(('assets', name+'.png'))
-    )
-
-
-# we declare various game states
-MENU_GS, TUTORIAL_GS, PAUSE_GS, PLAY_GS = range(4)  # one code per gamestate(GS)
+    # local
+    if not kataen.runs_in_web():
+        import os
+        return pygame.image.load(os.sep.join(('assets', name+'.png')))
+    # web-compatible
+    return pygame.image.load(name + '.png')
 
 
 def update_menu_gs():
@@ -115,7 +157,6 @@ def update_menu_gs():
     how_to_playRect.center = ((display[0] // 2), (display[1] // 2) + 190)
     win.blit(how_to_play, how_to_playRect)
     message_to_screen2center('lucidaconsole', 30, str(text), black, ((display[0] // 2) + 140, (display[1] // 2) + 104))
-    pygame.display.update()
 
 
 def update_tutorial_gs():
@@ -147,7 +188,6 @@ def update_tutorial_gs():
     message_to_screen2center("lucidaconsole", 20, "find a file named score.txt in your device for fing=ding all the scores ", black, (display[0] // 2, 176))
     message_to_screen2center("lucidaconsole", 20, "or the highscore.txt file for the highscore.", black, (display[0] // 2, 206))
     message_to_screen2center("lucidaconsole", 20, "5)You can click on the back button in the paused menu to go to the menus.", black, (display[0] // 2, 236))
-    pygame.display.update()
 
 
 def update_pause_gs():
@@ -193,7 +233,6 @@ def update_pause_gs():
     backRect = back.get_rect()
     backRect.center = (display[0] // 2, (display[1] // 2) - 80)
     win.blit(back, backRect)
-    pygame.display.update()
 
 
 def update_play_gs():
@@ -217,17 +256,17 @@ def update_play_gs():
             savendx = savescoreRect[0] + savescoreRect[2]
             savestarty = savescoreRect[1]
             savendy = savescoreRect[1] + savescoreRect[3]
-            if pos[0] >= ((344 // 2) - 100) - 40 and pos[0] <= ((344 // 2) - 100) + 40 and pos[1] >= (display[1] - 60) - 40 and pos[1]  <= (display[1] - 60) + 50:
+            if pos[0] >= ((X_CST // 2) - 100) - 40 and pos[0] <= ((X_CST // 2) - 100) + 40 and pos[1] >= (display[1] - 60) - 40 and pos[1]  <= (display[1] - 60) + 50:
                 playerList.append('rock')
                 playerScoreList.append(playerList)
                 computerList.append(randElement)
                 computerScoreList.append(computerList)
-            if pos[0] >= (344 // 2) - 40 and pos[0] <= (344 // 2) + 40 and pos[1] >= (display[1] - 60) - 40 and pos[1]  <= (display[1] - 60) + 50:
+            if pos[0] >= (X_CST // 2) - 40 and pos[0] <= (X_CST // 2) + 40 and pos[1] >= (display[1] - 60) - 40 and pos[1]  <= (display[1] - 60) + 50:
                 playerList.append('paper')
                 playerScoreList.append(playerList)
                 computerList.append(randElement)
                 computerScoreList.append(computerList)
-            if pos[0] >= ((344 // 2) + 100) - 40 and pos[0] <= ((344 // 2) + 100) + 40 and pos[1] >= (display[1] - 60) - 40 and pos[1]  <= (display[1] - 60) + 50:
+            if pos[0] >= ((X_CST // 2) + 100) - 40 and pos[0] <= ((X_CST // 2) + 100) + 40 and pos[1] >= (display[1] - 60) - 40 and pos[1]  <= (display[1] - 60) + 50:
                 playerList.append('scissor')
                 playerScoreList.append(playerList)
                 computerList.append(randElement)
@@ -245,9 +284,9 @@ def update_play_gs():
                 highscorecheck(playerScore, computerScore)
 
     win.fill(black)
-    pygame.draw.rect(win, (yellow), (10, 10, 344, display[1] - 20))
-    pygame.draw.rect(win, (yellow), (364, 10, 172, display[1] - 20))
-    pygame.draw.rect(win, (yellow), (546, 10, 344, display[1] - 20))
+    pygame.draw.rect(win, yellow, (10, 10, X_CST, display[1] - 20))
+    pygame.draw.rect(win, yellow, (364, 10, 172, display[1] - 20))
+    pygame.draw.rect(win, yellow, (546, 10, X_CST, display[1] - 20))
     savescore = img('saveScore')
     savescore = pygame.transform.scale(savescore, (12 * 14, 5 * 14))
     savescoreRect = savescore.get_rect()
@@ -272,15 +311,15 @@ def update_play_gs():
     win.blit(scorebanner, scorebannerRect)
     btn1 = pygame.transform.scale(btn, btnscale)
     btn1Rect = btn1.get_rect()
-    btn1Rect.center = ((344 // 2) - 100, display[1] - 60)
+    btn1Rect.center = ((X_CST // 2) - X_OFFSET, display[1] - 60)
     win.blit(btn1, btn1Rect)
     btn2 = pygame.transform.scale(btn, btnscale)
     btn2Rect = btn2.get_rect()
-    btn2Rect.center = ((344 // 2), display[1] - 60)
+    btn2Rect.center = ((X_CST // 2), display[1] - 60)
     win.blit(btn2, btn2Rect)
     btn3 = pygame.transform.scale(btn, btnscale)
     btn3Rect = btn3.get_rect()
-    btn3Rect.center = ((344 // 2) + 100, display[1] - 60)
+    btn3Rect.center = ((X_CST // 2) + X_OFFSET, display[1] - 60)
     win.blit(btn3, btn3Rect)
     rock = img('ROCK')
     paper = img('PAPER')
@@ -291,9 +330,9 @@ def update_play_gs():
     rockRect = rock.get_rect()
     paperRect = paper.get_rect()
     scissorRect = paper.get_rect()
-    rockRect.center = ((344 // 2) - 100, display[1] - 60)
-    paperRect.center = (344 // 2, display[1] - 60)
-    scissorRect.center = ((344 // 2) + 100, display[1] - 60)
+    rockRect.center = ((X_CST // 2) - 100, display[1] - 60)
+    paperRect.center = (X_CST // 2, display[1] - 60)
+    scissorRect.center = ((X_CST // 2) + 100, display[1] - 60)
     win.blit(rock, rockRect)
     win.blit(paper, paperRect)
     win.blit(scissor, scissorRect)
@@ -303,21 +342,21 @@ def update_play_gs():
             rock = pygame.transform.scale(rock, (7 * 32, 9 * 32))
             rock = pygame.transform.rotate(rock, -90)
             rockRect = rock.get_rect()
-            rockRect.center = (344 // 2, display[1] // 2)
+            rockRect.center = (X_CST // 2, display[1] // 2)
             win.blit(rock, rockRect)
         if playerList[0] == choice[1]:
             paper = img('PAPER')
             paper = pygame.transform.scale(paper, (14 * 12, 23 * 12))
             paper = pygame.transform.rotate(paper, -90)
             paperRect = paper.get_rect()
-            paperRect.center = (344 // 2, display[1] // 2)
+            paperRect.center = (X_CST // 2, display[1] // 2)
             win.blit(paper, paperRect)
         if playerList[0] == choice[2]:
             scissor = img('SCISSOR')
             scissor = pygame.transform.scale(scissor, (5 * 37, 8 * 37))
             scissor = pygame.transform.rotate(scissor, -90)
             scissorRect = scissor.get_rect()
-            scissorRect.center = (344 // 2, display[1] // 2)
+            scissorRect.center = (X_CST // 2, display[1] // 2)
             win.blit(scissor, scissorRect)
         if computerList[0] == choice[0]:
             rock = img('ROCK')
@@ -357,7 +396,7 @@ def update_play_gs():
                 loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
                 loserRect = loser.get_rect()
-                loserRect.center = (344 // 2, 50)
+                loserRect.center = (X_CST // 2, 50)
                 win.blit(loser, loserRect)
                 if len(computerScoreList) > 0:
                     computerScore += 1
@@ -366,7 +405,7 @@ def update_play_gs():
                 winner = img('winner')
                 winner = pygame.transform.scale(winner, (35 * 8, 5 * 8))
                 winnerRect = winner.get_rect()
-                winnerRect.center = (344 // 2, 50)
+                winnerRect.center = (X_CST // 2, 50)
                 win.blit(winner, winnerRect)
                 loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
@@ -381,7 +420,7 @@ def update_play_gs():
                 winner = img('winner')
                 winner = pygame.transform.scale(winner, (35 * 8, 5 * 8))
                 winnerRect = winner.get_rect()
-                winnerRect.center = (344 // 2, 50)
+                winnerRect.center = (X_CST // 2, 50)
                 win.blit(winner, winnerRect)
                 loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
@@ -400,7 +439,7 @@ def update_play_gs():
                 loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
                 loserRect = loser.get_rect()
-                loserRect.center = (344 // 2, 50)
+                loserRect.center = (X_CST // 2, 50)
                 win.blit(loser, loserRect)
                 if len(computerScoreList) > 0:
                     computerScore += 1
@@ -410,7 +449,7 @@ def update_play_gs():
                 winner = img('winner')
                 winner = pygame.transform.scale(winner, (35 * 8, 5 * 8))
                 winnerRect = winner.get_rect()
-                winnerRect.center = (344 // 2, 50)
+                winnerRect.center = (X_CST // 2, 50)
                 win.blit(winner, winnerRect)
                 loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
@@ -429,57 +468,35 @@ def update_play_gs():
                 loser = img('loser')
                 loser = pygame.transform.scale(loser, (24 * 8, 5 * 8))
                 loserRect = loser.get_rect()
-                loserRect.center = (344 // 2, 50)
+                loserRect.center = (X_CST // 2, 50)
                 win.blit(loser, loserRect)
                 if len(computerScoreList) > 0:
                     computerScore += 1
                     computerScoreList.clear()
     message_to_screen2center('lucidaconsole', 90, str(playerScore)+':'+str(computerScore), black, ((display[0] // 2), (display[1] // 2) - 20))
-    pygame.display.update()
 
 
-curr_gs = MENU_GS  # current game state
-
-# TODO we could add an associative structe: gamestate code to update function
-# e.g. assoc_gs_to_updatefunc = {}
-
-playerScoreadd = False
-computerScoreadd = False
-playerScore = 0
-computerScore = 0
-playerScoreList = []
-computerScoreList = []
-score_value = []
-black = (0, 0, 0)
-white = (255, 255, 255)
-red = (255, 0, 0)
-yellow = (255, 255, 0)
-green = (0, 255, 0)
-blue = (0, 0, 255)
-gameover = False
-menus = True
-highscore = False
-tutorial = False
-pause = False
-choice = ['rock', 'paper', 'scissor']
-playerList = []
-computerList = []
-randElement = random.choice(choice)
-computerList.append(randElement)
+# - associative structure: gamestate code to update function
+assoc_gs_to_updatefunc = {
+    MENU_GS: update_menu_gs,
+    TUTORIAL_GS: update_tutorial_gs,
+    PAUSE_GS: update_pause_gs,
+    PLAY_GS: update_play_gs
+}
 
 
-# - game loop
-while not gameover:
-    if curr_gs == MENU_GS:
-        update_menu_gs()
-    elif curr_gs == TUTORIAL_GS:
-        update_tutorial_gs()
-    elif curr_gs == PAUSE_GS:
-        update_pause_gs()
-    elif curr_gs == PLAY_GS:
-        update_play_gs()
+@katasdk.web_animate
+def generic_update():
+    adhoc_func = assoc_gs_to_updatefunc[curr_gs]
+    adhoc_func()
+    kataen.display_update()
 
 
-print(playerScore)
-print(computerScore)
-pygame.quit()
+if __name__ == '__main__':
+    init_game()
+    while not gameover:
+        generic_update()
+
+    print(playerScore)
+    print(computerScore)
+    kataen.cleanup()
