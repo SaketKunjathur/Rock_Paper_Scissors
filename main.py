@@ -76,16 +76,30 @@ def savscore(winner, loser):
     a.close()
 
 
+def safe_highscore_open_op():
+    FNAME = 'highscore.txt'
+    try:
+        res = open(FNAME, 'r')
+    except FileNotFoundError:
+        ftmp = open(FNAME, 'w')
+        ftmp.write('0:0')
+        ftmp.close()
+        res = open(FNAME, 'r')
+    return res
+
+
 def highscorecheck(winner, loser):
     # TODO add comments to describe the logic behind this function
     # TODO fix bugs if score > 10
-    b = open('highscore.txt', 'r')
+    b = safe_highscore_open_op()
     text = b.read()
     b.close()
+    
     text = str(text)
     textSplit = text.split(':')
     wins = int(textSplit[0])
     loses = int(textSplit[1])
+    
     score1 = wins - loses
     score2 = winner - loser
     if score1 < score2:
@@ -93,10 +107,12 @@ def highscorecheck(winner, loser):
         c.write(str(winner)+':'+str(loser))
     if score1 == score2:
         if wins < winner:
-            c.write('highscore.txt')
+            # useful?
+            # c.write('highscore.txt')
             c.write(str(winner)+':'+str(loser))
         if wins > winner:
-            c.write('highscore.txt')
+            # useful?
+            # c.write('highscore.txt')
             c.write(str(wins)+':'+str(loses))
 
 
@@ -133,7 +149,7 @@ def update_menu_gs():
                 curr_gs = TUTORIAL_GS
     
     win.fill(yellow)
-    c = open('highscore.txt', 'r')
+    c = safe_highscore_open_op()
     text = c.read()
     c.close
     title = img('title')
